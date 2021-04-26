@@ -1,0 +1,36 @@
+version: 0.2
+
+run-as: root
+
+env:
+  variables:
+    AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+
+phases:
+  install:
+    commands:
+      # AWS CLI Install
+      - echo "Installing dependencies"
+      - aws --version
+      # Install Kubectl
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    finally:
+      - echo Dependencies were installed!
+  pre_build:
+    commands:
+      # Download EKS kubeconfig
+      - aws eks --region us-east-1 update-kubeconfig --name cubbit-cluster
+  build:
+    commands:
+      # Create k8s resources
+      - kubectl create -f secret.yml
+      - kubectl create -f webapp-service.yml
+      - kubectl create -f webapp-deployment.yml
+      - kubectl create -f nginx-configmap.yml
+      - kubectl create -f nginx-service.yml
+      - kubectl create -f nginx-deployment.yml
+    finally:
+      - echo "Resources deployed correctly!"
