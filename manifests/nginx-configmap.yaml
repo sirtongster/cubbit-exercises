@@ -1,0 +1,20 @@
+# Creates the Nginx configuration file
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: nginx-config
+data: 
+  default.conf: |-
+      server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+    
+        index    index.html index.htm index.php;
+    
+        root /var/www/html;
+        server_name webapp;
+        
+        location /compressor {
+          proxy_pass http://webapp:3000/;
+        }
+      }

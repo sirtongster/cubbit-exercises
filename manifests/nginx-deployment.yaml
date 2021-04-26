@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: nginx
+    securityContext:
+      fsGroup: 1000
+    spec:
+      containers:
+        - image: nginx
+          name: nginx
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          command: [ "/bin/bash", "-c", "nginx -g 'daemon off;'" ]
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d/default.conf
+              name: nginx-config
+              subPath: default.conf
+              readOnly: false
+      restartPolicy: Always
+      volumes: 
+        - configMap: 
+            name: nginx-config
+          name: nginx-config
