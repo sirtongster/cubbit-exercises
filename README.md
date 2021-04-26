@@ -20,8 +20,8 @@ A simple image compressor built with [react](https://reactjs.org/) and [browser-
 1. Clone the repository and change directory.
 
 ```
-git clone https://github.com/sirtongster/examen_qubbit.git
-cd examen_qubbit
+git clone https://github.com/sirtongster/cubbit_exercises.git
+cd cubbit_exercises
 ```
 
 2. Install npm dependencies
